@@ -77,7 +77,7 @@ dependencies {
     implementation "androidx.fragment:fragment:1.1.0"
     implementation 'androidx.appcompat:appcompat:1.1.0'
     // 添加uni-app插件
-    implementation project(':uniplugin_component')
+    implementation project(':blewifi')
     implementation project(':uniplugin_module')
     implementation project(':uniplugin_richalert')
 }
