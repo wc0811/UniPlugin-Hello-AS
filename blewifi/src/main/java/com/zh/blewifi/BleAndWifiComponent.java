@@ -14,9 +14,9 @@ import io.dcloud.feature.uniapp.ui.component.AbsVContainer;
 import io.dcloud.feature.uniapp.ui.component.UniComponent;
 import io.dcloud.feature.uniapp.ui.component.UniComponentProp;
 
-public class TestText extends UniComponent<TextView> {
+public class BleAndWifiComponent extends UniComponent<TextView> {
 
-    public TestText(UniSDKInstance instance, AbsVContainer parent, AbsComponentData basicComponentData) {
+    public BleAndWifiComponent(UniSDKInstance instance, AbsVContainer parent, AbsComponentData basicComponentData) {
         super(instance, parent, basicComponentData);
     }
 
@@ -42,6 +42,20 @@ public class TestText extends UniComponent<TextView> {
     @UniJSMethod
     public void clearTel() {
         getHostView().setText("");
+    }
+    @UniComponentProp(name = "wifi")
+    public void setWifi(String wifi) {
+        getHostView().setText("tel: " + wifi);
+        Map<String, Object> params = new HashMap<>();
+        Map<String, Object> number = new HashMap<>();
+        number.put("wifi", wifi);
+        //目前uni限制 参数需要放入到"detail"中 否则会被清理
+        params.put("detail", number);
+        fireEvent("onTel", params);
+    }
+    @UniJSMethod
+    public void getWifi() {
+        getHostView().setText("111");
     }
 
     @Override
