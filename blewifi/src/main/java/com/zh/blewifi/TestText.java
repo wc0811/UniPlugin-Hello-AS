@@ -1,8 +1,9 @@
-package io.dcloud.uniplugin;
+package com.zh.blewifi;
 
 import android.content.Context;
 import android.graphics.Color;
 import android.widget.TextView;
+
 import java.util.HashMap;
 import java.util.Map;
 
