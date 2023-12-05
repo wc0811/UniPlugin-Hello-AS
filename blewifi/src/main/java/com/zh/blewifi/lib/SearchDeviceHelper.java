@@ -1,4 +1,4 @@
-package com.zh.lib;
+package com.zh.blewifi.lib;
 
 import android.Manifest;
 import android.app.Activity;
@@ -13,8 +13,9 @@ import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 
-import com.zh.lib.listener.SearchDeviceListener;
-import com.zh.util.BLog;
+
+import com.zh.blewifi.lib.listener.SearchDeviceListener;
+import com.zh.blewifi.util.BLog;
 
 import java.util.Set;
 

@@ -1,4 +1,4 @@
-package com.yp.Utils;
+package com.zh.blewifi.Utils;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,17 +14,16 @@ import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.yp.R;
-import com.yp.delegate.WifiDelegate;
-import com.yp.listener.ScanResultListener;
-import com.zh.bean.SimpleWifiBean;
-import com.zh.bean.WifiCipherType;
+import com.zh.blewifi.bean.SimpleWifiBean;
+import com.zh.blewifi.bean.WifiCipherType;
+import com.zh.blewifi.delegate.WifiDelegate;
+import com.zh.blewifi.listener.ScanResultListener;
 
 import java.util.List;
+
+import uni.dcloud.io.blewifi.R;
 
 public class WifiUtil {
     public static final String SP_NAME = "WIFI_INFO_SAVE";

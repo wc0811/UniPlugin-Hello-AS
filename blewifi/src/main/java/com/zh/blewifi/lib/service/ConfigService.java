@@ -1,4 +1,4 @@
-package com.zh.lib.service;
+package com.zh.blewifi.lib.service;
 
 import android.app.IntentService;
 import android.bluetooth.BluetoothAdapter;
@@ -20,10 +20,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.zh.lib.error.GattError;
-import com.zh.lib.security.CRC;
-import com.zh.util.BLog;
-import com.zh.util.ByteUtils;
+
+import com.zh.blewifi.lib.error.GattError;
+import com.zh.blewifi.lib.security.CRC;
+import com.zh.blewifi.util.BLog;
+import com.zh.blewifi.util.ByteUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
@@ -318,7 +319,7 @@ public  class ConfigService extends IntentService {
         sendByte[3] = (byte) pwdBytes.length;
         System.arraycopy(pwdBytes,0,sendByte,4,pwdBytes.length);
         sendByte = CRC.calcCRC(sendByte);
-        broadcastLog(LOG_LEVEL_DEBUG,"send data:"+ByteUtils.byte2HexStr(sendByte));
+        broadcastLog(LOG_LEVEL_DEBUG,"send data:"+ ByteUtils.byte2HexStr(sendByte));
 
         characteristic.setWriteType(WRITE_TYPE);
         characteristic.setValue(sendByte);

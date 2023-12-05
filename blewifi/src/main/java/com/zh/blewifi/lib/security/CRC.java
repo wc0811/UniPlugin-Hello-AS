@@ -1,4 +1,4 @@
-package com.zh.lib.security;
+package com.zh.blewifi.lib.security;
 
 public class CRC {
 

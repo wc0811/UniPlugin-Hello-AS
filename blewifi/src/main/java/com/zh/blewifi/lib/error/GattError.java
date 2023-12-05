@@ -20,7 +20,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.zh.lib.error;
+package com.zh.blewifi.lib.error;
 
 import android.bluetooth.BluetoothGatt;
 

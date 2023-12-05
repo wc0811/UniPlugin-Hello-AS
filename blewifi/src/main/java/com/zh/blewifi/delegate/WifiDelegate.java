@@ -1,4 +1,4 @@
-package com.yp.delegate;
+package com.zh.blewifi.delegate;
 
 import android.content.Context;
 import android.net.wifi.ScanResult;

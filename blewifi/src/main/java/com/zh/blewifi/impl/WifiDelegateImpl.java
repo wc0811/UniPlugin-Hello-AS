@@ -1,4 +1,4 @@
-package com.yp.impl;
+package com.zh.blewifi.impl;
 
 import android.Manifest;
 import android.content.Context;
@@ -8,11 +8,9 @@ import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.yp.Utils.WifiUtil;
-import com.yp.delegate.WifiDelegate;
 import com.tbruyelle.rxpermissions2.RxPermissions;
-
-
+import com.zh.blewifi.Utils.WifiUtil;
+import com.zh.blewifi.delegate.WifiDelegate;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;

@@ -1,4 +1,4 @@
-package com.zh.bean;
+package com.zh.blewifi.bean;
 
 import android.os.Parcel;
 import android.os.Parcelable;

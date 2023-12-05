@@ -1,4 +1,4 @@
-package com.zh.lib.service;
+package com.zh.blewifi.lib.service;
 
 import androidx.annotation.NonNull;
 

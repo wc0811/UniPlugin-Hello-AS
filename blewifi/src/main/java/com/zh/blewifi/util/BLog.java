@@ -1,4 +1,4 @@
-package com.zh.util;
+package com.zh.blewifi.util;
 
 import android.util.Log;
 

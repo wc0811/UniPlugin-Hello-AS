@@ -1,4 +1,26 @@
-package com.zh.lib;
+package com.zh.blewifi.lib;
+
+import static com.zh.blewifi.lib.service.ConfigService.BROADCAST_CONFIG_CONECTED;
+import static com.zh.blewifi.lib.service.ConfigService.BROADCAST_CONFIG_ERR_APP_CRC;
+import static com.zh.blewifi.lib.service.ConfigService.BROADCAST_CONFIG_ERR_CON;
+import static com.zh.blewifi.lib.service.ConfigService.BROADCAST_CONFIG_ERR_CON_PWD;
+import static com.zh.blewifi.lib.service.ConfigService.BROADCAST_CONFIG_ERR_CON_TIMEOUT;
+import static com.zh.blewifi.lib.service.ConfigService.BROADCAST_CONFIG_ERR_DEV_CRC;
+import static com.zh.blewifi.lib.service.ConfigService.BROADCAST_CONFIG_SUCCESS;
+import static com.zh.blewifi.lib.service.ConfigService.BROADCAST_CONFIG_UUID_NOT_EXIST;
+import static com.zh.blewifi.lib.service.ConfigService.BROADCAST_LOG;
+import static com.zh.blewifi.lib.service.ConfigService.BROADCAST_LOG_EXTRA_EXCEPTION;
+import static com.zh.blewifi.lib.service.ConfigService.BROADCAST_LOG_EXTRA_LEVEL;
+import static com.zh.blewifi.lib.service.ConfigService.BROADCAST_LOG_EXTRA_MSG;
+import static com.zh.blewifi.lib.service.ConfigService.BROADCAST_LOG_EXTRA_TAG;
+import static com.zh.blewifi.lib.service.ConfigService.EXTRA_DEVICE_ADDRESS;
+import static com.zh.blewifi.lib.service.ConfigService.EXTRA_PASSWORD;
+import static com.zh.blewifi.lib.service.ConfigService.EXTRA_SSID;
+import static com.zh.blewifi.lib.service.ConfigService.EXTRA_TIMEOUT;
+import static com.zh.blewifi.lib.service.ConfigService.LOG_LEVEL_DEBUG;
+import static com.zh.blewifi.lib.service.ConfigService.LOG_LEVEL_ERROR;
+import static com.zh.blewifi.lib.service.ConfigService.LOG_LEVEL_INFO;
+import static com.zh.blewifi.lib.service.ConfigService.LOG_LEVEL_WARN;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -11,32 +33,10 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.zh.lib.error.ErrCode;
-import com.zh.lib.listener.ConfigListener;
-import com.zh.lib.listener.LogListener;
-import com.zh.lib.service.ConfigService;
-
-import static com.zh.lib.service.ConfigService.BROADCAST_CONFIG_CONECTED;
-import static com.zh.lib.service.ConfigService.BROADCAST_CONFIG_ERR_APP_CRC;
-import static com.zh.lib.service.ConfigService.BROADCAST_CONFIG_ERR_CON;
-import static com.zh.lib.service.ConfigService.BROADCAST_CONFIG_ERR_CON_PWD;
-import static com.zh.lib.service.ConfigService.BROADCAST_CONFIG_ERR_CON_TIMEOUT;
-import static com.zh.lib.service.ConfigService.BROADCAST_CONFIG_ERR_DEV_CRC;
-import static com.zh.lib.service.ConfigService.BROADCAST_CONFIG_SUCCESS;
-import static com.zh.lib.service.ConfigService.BROADCAST_CONFIG_UUID_NOT_EXIST;
-import static com.zh.lib.service.ConfigService.BROADCAST_LOG;
-import static com.zh.lib.service.ConfigService.BROADCAST_LOG_EXTRA_EXCEPTION;
-import static com.zh.lib.service.ConfigService.BROADCAST_LOG_EXTRA_LEVEL;
-import static com.zh.lib.service.ConfigService.BROADCAST_LOG_EXTRA_MSG;
-import static com.zh.lib.service.ConfigService.BROADCAST_LOG_EXTRA_TAG;
-import static com.zh.lib.service.ConfigService.EXTRA_DEVICE_ADDRESS;
-import static com.zh.lib.service.ConfigService.EXTRA_PASSWORD;
-import static com.zh.lib.service.ConfigService.EXTRA_SSID;
-import static com.zh.lib.service.ConfigService.EXTRA_TIMEOUT;
-import static com.zh.lib.service.ConfigService.LOG_LEVEL_DEBUG;
-import static com.zh.lib.service.ConfigService.LOG_LEVEL_ERROR;
-import static com.zh.lib.service.ConfigService.LOG_LEVEL_INFO;
-import static com.zh.lib.service.ConfigService.LOG_LEVEL_WARN;
+import com.zh.blewifi.lib.error.ErrCode;
+import com.zh.blewifi.lib.listener.ConfigListener;
+import com.zh.blewifi.lib.listener.LogListener;
+import com.zh.blewifi.lib.service.ConfigService;
 
 public  class ConfigHelper {
 
@@ -225,11 +225,5 @@ public  class ConfigHelper {
                 mConfigListener.onFail(ErrCode.CRC_APP_VERTIFY_FAIL);
             }
         }
-
     }
-
-
-
-
-
 }

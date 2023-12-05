@@ -1,4 +1,4 @@
-package com.yp.broadcast;
+package com.zh.blewifi.broadcast;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -9,8 +9,8 @@ import android.net.wifi.WifiManager;
 import android.util.Log;
 
 
-import com.yp.delegate.WifiDelegate;
-import com.yp.listener.ScanResultListener;
+import com.zh.blewifi.delegate.WifiDelegate;
+import com.zh.blewifi.listener.ScanResultListener;
 
 import java.util.List;
 

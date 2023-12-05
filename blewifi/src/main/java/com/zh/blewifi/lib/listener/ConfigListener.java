@@ -1,6 +1,7 @@
-package com.zh.lib.listener;
+package com.zh.blewifi.lib.listener;
 
-import com.zh.lib.error.ErrCode;
+
+import com.zh.blewifi.lib.error.ErrCode;
 
 public abstract class ConfigListener {
 

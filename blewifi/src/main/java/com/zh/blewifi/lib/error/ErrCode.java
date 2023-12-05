@@ -1,4 +1,4 @@
-package com.zh.lib.error;
+package com.zh.blewifi.lib.error;
 
 import androidx.annotation.NonNull;
 
