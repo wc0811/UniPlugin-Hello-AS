@@ -1,6 +1,5 @@
 package io.dcloud.uniplugin;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -35,7 +34,7 @@ import io.dcloud.uniplugin.lib.listener.LogListener;
 import io.dcloud.uniplugin.lib.service.ConfigService;
 import uni.dcloud.io.uniplugin_module.R;
 
-public class MainActivity extends AppCompatActivity {
+public class BleAndWifiActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
 
@@ -64,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_ble_wifi);
         findViewById();
         loadConfig();
 
@@ -90,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onSuccess() {
             appendLog("配网成功");
-            Toast.makeText(MainActivity.this, "配网成功", Toast.LENGTH_SHORT).show();
+            Toast.makeText(BleAndWifiActivity.this, "配网成功", Toast.LENGTH_SHORT).show();
             enableView(true);
         }
 
@@ -98,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
         public void onFail(ErrCode errCode) {
             appendLog("配网失败,原因:" + errCode.toString());
             enableView(true);
-            Toast.makeText(MainActivity.this, "配网失败,原因:" + errCode.toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(BleAndWifiActivity.this, "配网失败,原因:" + errCode.toString(), Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -142,14 +141,14 @@ public class MainActivity extends AppCompatActivity {
         btnSearchBLE.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, SearchBleActivity.class);
+                Intent intent = new Intent(BleAndWifiActivity.this, SearchBleActivity.class);
                 startActivityForResult(intent, SELECT_DEV_REQ);
             }
         });
         btnSearchSSID.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intentSSID = new Intent(MainActivity.this, SearchWiFiActivity.class);
+                Intent intentSSID = new Intent(BleAndWifiActivity.this, SearchWiFiActivity.class);
                 startActivityForResult(intentSSID, SELECT_SSID_REQ);
             }
         });
@@ -159,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
                 saveConfig();
                 wifiSSID = etSSID.getText() + "";
                 if (wifiSSID.length() == 0 || bleMac.length() == 0 || (etPwd.getText() + "").length() == 0) {
-                    Toast.makeText(MainActivity.this, "请先设置BLEName、WIFi名字 、密码", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(BleAndWifiActivity.this, "请先设置BLEName、WIFi名字 、密码", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -167,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
                         .setSsid(wifiSSIDBytes)
                         .setDeviceAddress(bleMac)
                         .setTimeoutMilliscond(40 * 1000)//40s
-                        .startConfig(MainActivity.this, ConfigService.class);
+                        .startConfig(BleAndWifiActivity.this, ConfigService.class);
                 enableView(false);
             }
         });
@@ -175,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 etLog.setText("");
-                Toast.makeText(MainActivity.this, "清除日志成功", Toast.LENGTH_SHORT).show();
+                Toast.makeText(BleAndWifiActivity.this, "清除日志成功", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -265,7 +264,7 @@ public class MainActivity extends AppCompatActivity {
             switch (msg.what) {
                 case MSG_ERROR:
                     String errrMsg = (String) msg.obj;
-                    Toast.makeText(MainActivity.this, errrMsg, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(BleAndWifiActivity.this, errrMsg, Toast.LENGTH_SHORT).show();
                 case MSG_LOG_UI:
                     String log = (String) msg.obj;
                     if (etLog.getText().length() > 10000) {//太长了，截掉一些

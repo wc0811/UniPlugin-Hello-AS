@@ -35,7 +35,7 @@
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name="io.dcloud.uniplugin.MainActivity"
+            android:name="io.dcloud.uniplugin.BleAndWifiActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:exported="true"
             android:screenOrientation="portrait"
