@@ -42,7 +42,6 @@
         android:onClick="onClick"
         android:visibility="visible"
         app:backgroundTint="#007b6c"
-        app:rippleColor="#008577"
         app:srcCompat="@drawable/back" />
 
 </FrameLayout>
