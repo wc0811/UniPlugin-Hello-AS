@@ -1,5 +1,6 @@
 package io.dcloud.uniplugin;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
@@ -253,7 +254,7 @@ public class SearchBleActivity extends AppCompatActivity implements SwipeRefresh
         }
 
         @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
+        public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") final int position) {
 
             final ViewHolder viewHolder = (ViewHolder) holder;
             final BluetoothDevice dev = mLeDevices.get(position);

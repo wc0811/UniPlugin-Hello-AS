@@ -1,16 +1,18 @@
 package io.dcloud.uniplugin.delegate;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.wifi.ScanResult;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.List;
 
 public interface WifiDelegate {
 
-    void wifiScan(AppCompatActivity mActivity);
+    void wifiScan(Activity mActivity);
+
     List<ScanResult> getWifiScanResult(Context context);
+
     int getCurrentIndex();
+
     void stopScan();
 }

@@ -1,21 +1,21 @@
 package io.dcloud.uniplugin.impl;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.tbruyelle.rxpermissions2.RxPermissions;
-import io.dcloud.uniplugin.Utils.WifiUtil;
-import io.dcloud.uniplugin.delegate.WifiDelegate;
+
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import io.dcloud.uniplugin.Utils.WifiUtil;
+import io.dcloud.uniplugin.delegate.WifiDelegate;
 import io.reactivex.functions.Consumer;
 
 public class WifiDelegateImpl implements WifiDelegate {
@@ -29,7 +29,7 @@ public class WifiDelegateImpl implements WifiDelegate {
 
 
     @Override
-    public void wifiScan(final AppCompatActivity mActivity) {
+    public void wifiScan(final Activity mActivity) {
         index = 0;
         if (rxPermissions == null) {
             rxPermissions = new RxPermissions(mActivity);

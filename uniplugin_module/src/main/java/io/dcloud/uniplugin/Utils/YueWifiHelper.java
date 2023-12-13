@@ -1,29 +1,27 @@
 package io.dcloud.uniplugin.Utils;
 
+import android.app.Activity;
 import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiInfo;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import java.lang.ref.WeakReference;
+import java.util.List;
 
 import io.dcloud.uniplugin.broadcast.WifiBroadcastReceiver;
 import io.dcloud.uniplugin.delegate.WifiDelegate;
 import io.dcloud.uniplugin.impl.WifiDelegateImpl;
 import io.dcloud.uniplugin.listener.ScanResultListener;
 
-import java.lang.ref.WeakReference;
-import java.util.List;
-
 public class YueWifiHelper {
 
-    private WeakReference<AppCompatActivity> mContext;
+    private WeakReference<Activity> mContext;
     private WifiDelegate delegate;
     private WifiBroadcastReceiver receiver;
     private IntentFilter filter;
     private ScanResultListener listener;
 
-    public YueWifiHelper(AppCompatActivity context, ScanResultListener listener) {
+    public YueWifiHelper(Activity context, ScanResultListener listener) {
         init(context, listener);
     }
 
@@ -31,7 +29,7 @@ public class YueWifiHelper {
      * 1. 初始化Delegate
      * 2.注册广播
      */
-    public void init(AppCompatActivity context, ScanResultListener listener) {
+    public void init(Activity context, ScanResultListener listener) {
         try {
             mContext = new WeakReference<>(context);
             delegate = new WifiDelegateImpl();

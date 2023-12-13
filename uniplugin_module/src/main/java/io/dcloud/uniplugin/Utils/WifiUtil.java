@@ -1,5 +1,6 @@
 package io.dcloud.uniplugin.Utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,15 +15,16 @@ import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
+
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.List;
+
 import io.dcloud.uniplugin.bean.SimpleWifiBean;
 import io.dcloud.uniplugin.bean.WifiCipherType;
 import io.dcloud.uniplugin.delegate.WifiDelegate;
 import io.dcloud.uniplugin.listener.ScanResultListener;
 import uni.dcloud.io.uniplugin_module.R;
-
-import java.util.List;
 
 
 public class WifiUtil {
@@ -266,18 +268,18 @@ public class WifiUtil {
      * xiaomi 手动设置权限
      * xiaomi need to set wifi permission manually
      */
-    public static void requestWifiPermision(AppCompatActivity activity){
+    public static void requestWifiPermision(Activity activity){
         showDialo(activity);
     }
 
-    public static void gotoAuthorize(AppCompatActivity activity){
+    public static void gotoAuthorize(Activity activity){
         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         Uri uri = Uri.fromParts("package", activity.getPackageName(), null);
         intent.setData(uri);
         activity.startActivityForResult(intent, MI_REQUEST_CODE);
     }
 
-    public static void showDialo(final AppCompatActivity context){
+    public static void showDialo(final Activity context){
        AlertDialog.Builder builder = new AlertDialog.Builder(context);
        builder.setTitle(context.getString(R.string.permission_request)).
                setMessage(context.getString(R.string.Wifi_permission)).setPositiveButton(context.getString(R.string.wifi_allow), new DialogInterface.OnClickListener() {
@@ -294,7 +296,7 @@ public class WifiUtil {
     }
 
 
-    public static boolean checkMIwifiPermission(AppCompatActivity activity){
+    public static boolean checkMIwifiPermission(Activity activity){
         WifiManager wifimanager = (WifiManager) activity.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         long clickMill = System.currentTimeMillis();
         boolean enable = wifimanager.setWifiEnabled(true);
