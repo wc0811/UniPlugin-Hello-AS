@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -233,7 +234,9 @@ public class BleAndWifiActivity extends AppCompatActivity {
             etPwd.setText(pwd);
         bleMac = sharedPreferences.getString(SP_KEY_BLE_MAC, "");
 
-        wifiSSIDBytes = (etSSID.getText() + "").getBytes(StandardCharsets.UTF_8);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            wifiSSIDBytes = (etSSID.getText() + "").getBytes(StandardCharsets.UTF_8);
+        }
 
         boolean isChecked = sharedPreferences.getBoolean(SP_KEY_CHECKBOX_PWD, false);
         cbPwd.setChecked(isChecked);

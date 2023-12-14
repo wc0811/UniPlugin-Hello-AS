@@ -70,8 +70,54 @@ public class TestModule extends UniModule implements IDeviceHelper, ScanResultLi
 
     //run ui thread
     @UniJSMethod(uiThread = true)
-    public void setBleAndeNet(JSONObject options, UniJSCallback callback) {
-        Log.e(TAG, "testAsyncFunc--" + options);
+    public void testAsyncFunc1(JSONObject options, UniJSCallback callback) {
+        if (callback != null) {
+            callbackBleInfo = callback;
+            //callback.invokeAndKeepAlive(data);
+            if (mUniSDKInstance != null && mUniSDKInstance.getContext() instanceof Activity) {
+                try {
+                    searchDeviceHelper = new SearchDeviceHelper(((Activity) mUniSDKInstance.getContext()));
+                    searchDeviceHelper.reuestBlePermission(((Activity) mUniSDKInstance.getContext()));
+                    searchDeviceHelper.searchDevice(searchDevice);
+
+                } catch (Exception e) {
+                    JSONObject data = new JSONObject();
+                    data.put("code", "success");
+                    data.put("messageForBle", "发生异常" + e.getCause());
+                    callbackBleInfo.invoke(data);
+                }
+            }
+        }
+    }
+
+    @UniJSMethod(uiThread = true)
+    public void testAsyncFunc2(JSONObject options, UniJSCallback callback) {
+        if (callback != null) {
+            callbackWifiInfo = callback;
+            //callback.invokeAndKeepAlive(data);
+            if (mUniSDKInstance != null && mUniSDKInstance.getContext() instanceof Activity) {
+                try {
+
+                    searchDeviceHelper = new SearchDeviceHelper(((Activity) mUniSDKInstance.getContext()));
+                    searchDeviceHelper.reuestBlePermission(((Activity) mUniSDKInstance.getContext()));
+                    searchDeviceHelper.searchDevice(searchDevice);
+
+
+                    helper = new YueWifiHelper((Activity) mUniSDKInstance.getContext(), this);
+                    helper.startScan();
+                } catch (Exception e) {
+                    JSONObject data = new JSONObject();
+                    data.put("code", "success");
+                    data.put("messageForBle", "发生异常" + e.getCause());
+                    callbackBleInfo.invoke(data);
+                }
+            }
+        }
+    }
+
+    @UniJSMethod(uiThread = true)
+    public void testAsyncFunc3(JSONObject options, UniJSCallback callback) {
+
         if (callback != null) {
             callbackResult = callback;
             String bleName = "";
@@ -115,7 +161,107 @@ public class TestModule extends UniModule implements IDeviceHelper, ScanResultLi
             } catch (Exception exception) {
                 JSONObject data = new JSONObject();
                 data.put("code", "success");
-                data.put("message", "数据解析异常");
+                data.put("message", "异常" + exception.getCause());
+                callback.invoke(data);
+            }
+
+            //callback.invokeAndKeepAlive(data);
+        }
+    }
+
+    @UniJSMethod(uiThread = true)
+    public void testAsyncFunc4(JSONObject options, UniJSCallback callback) {
+        if (callback != null) {
+            callbackBleInfo = callback;
+            //callback.invokeAndKeepAlive(data);
+            if (mUniSDKInstance != null && mUniSDKInstance.getContext() instanceof Activity) {
+                try {
+                    strBleName = options.getString("bleName");
+                    searchDeviceHelper = new SearchDeviceHelper(((Activity) mUniSDKInstance.getContext()));
+                    searchDeviceHelper.reuestBlePermission(((Activity) mUniSDKInstance.getContext()));
+                    searchDeviceHelper.searchDevice(searchDevice);
+
+                } catch (Exception e) {
+                    JSONObject data = new JSONObject();
+                    data.put("code", "success");
+                    data.put("messageForBle", "发生异常" + e.getCause());
+                    callbackBleInfo.invoke(data);
+                }
+            }
+        }
+
+    }
+
+    @UniJSMethod(uiThread = true)
+    public void getBleInfoByBleName(JSONObject options, UniJSCallback callback) {
+        if (callback != null) {
+            callbackBleInfo = callback;
+            //callback.invokeAndKeepAlive(data);
+            if (mUniSDKInstance != null && mUniSDKInstance.getContext() instanceof Activity) {
+                try {
+                    strBleName = options.getString("bleName");
+                    searchDeviceHelper = new SearchDeviceHelper(((Activity) mUniSDKInstance.getContext()));
+                    searchDeviceHelper.reuestBlePermission(((Activity) mUniSDKInstance.getContext()));
+                    searchDeviceHelper.searchDevice(searchDevice);
+
+                } catch (Exception e) {
+                    JSONObject data = new JSONObject();
+                    data.put("code", "success");
+                    data.put("messageForBle", "发生异常" + e.getCause());
+                    callbackBleInfo.invoke(data);
+                }
+            }
+        }
+
+    }
+
+    //run ui thread
+    @UniJSMethod(uiThread = true)
+    public void setBleAndeNet(JSONObject options, UniJSCallback callback) {
+        if (callback != null) {
+            callbackResult = callback;
+            String bleName = "";
+            String wifiSSID = "";
+            String wifiPassword = "";
+            try {
+                bleName = options.getString("bleName");
+                wifiSSID = options.getString("wifiName");
+                wifiPassword = options.getString("wifiPassword");
+
+
+                configHelper = new ConfigHelper();
+
+                if (mUniSDKInstance != null && mUniSDKInstance.getContext() instanceof Activity) {
+                    searchDeviceHelper = new SearchDeviceHelper(((Activity) mUniSDKInstance.getContext()));
+                    searchDeviceHelper.reuestBlePermission(((Activity) mUniSDKInstance.getContext()));
+                    searchDeviceHelper.searchDevice(searchDevice);
+
+                    configHelper.registerConfigListener(((Activity) mUniSDKInstance.getContext()), configListener);
+                    String bleMac = "";
+                    for (BluetoothDevice item : mLeDevices) {
+                        if (bleName != null && bleName == item.getName()) {
+                            bleMac = item.getAddress();
+                            break;
+                        }
+                    }
+
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+                        byte[] wifiSSIDBytes = null;
+                        for (ScanResult wifiItem : mWifiList) {
+                            if (wifiSSID != null && wifiSSID == wifiItem.SSID) {
+                                wifiSSIDBytes = getSSIDRawData(wifiItem);
+                                break;
+                            }
+                        }
+                        configHelper.setPassword(wifiPassword).setSsid(wifiSSIDBytes).setDeviceAddress(bleMac).setTimeoutMilliscond(40 * 1000)//40s
+                                .startConfig(((Activity) mUniSDKInstance.getContext()), ConfigService.class);
+
+                    }
+                }
+            } catch (Exception exception) {
+                JSONObject data = new JSONObject();
+                data.put("code", "success");
+                data.put("message", "异常" + exception.getCause());
                 callback.invoke(data);
             }
 
@@ -127,33 +273,51 @@ public class TestModule extends UniModule implements IDeviceHelper, ScanResultLi
     @UniJSMethod(uiThread = true)
     public void getBleInfo(JSONObject options, UniJSCallback callback) {
         Log.e(TAG, "testAsyncFunc--" + options);
+
         if (callback != null) {
             callbackBleInfo = callback;
             //callback.invokeAndKeepAlive(data);
             if (mUniSDKInstance != null && mUniSDKInstance.getContext() instanceof Activity) {
-                searchDeviceHelper = new SearchDeviceHelper(((Activity) mUniSDKInstance.getContext()));
-                searchDeviceHelper.reuestBlePermission(((Activity) mUniSDKInstance.getContext()));
-                searchDeviceHelper.searchDevice(searchDevice);
+                try {
+                    searchDeviceHelper = new SearchDeviceHelper(((Activity) mUniSDKInstance.getContext()));
+                    searchDeviceHelper.reuestBlePermission(((Activity) mUniSDKInstance.getContext()));
+                    searchDeviceHelper.searchDevice(searchDevice);
+
+                } catch (Exception e) {
+                    JSONObject data = new JSONObject();
+                    data.put("code", "success");
+                    data.put("messageForBle", "发生异常" + e.getCause());
+                    callbackBleInfo.invoke(data);
+                }
             }
         }
     }
 
     @UniJSMethod(uiThread = true)
     public void getWifiInfo(JSONObject options, UniJSCallback callback) {
-        Log.e(TAG, "testAsyncFunc--" + options);
         if (callback != null) {
             callbackWifiInfo = callback;
             //callback.invokeAndKeepAlive(data);
             if (mUniSDKInstance != null && mUniSDKInstance.getContext() instanceof Activity) {
-                searchDeviceHelper = new SearchDeviceHelper(((Activity) mUniSDKInstance.getContext()));
-                searchDeviceHelper.reuestBlePermission(((Activity) mUniSDKInstance.getContext()));
-                searchDeviceHelper.searchDevice(searchDevice);
+                try {
+
+                    searchDeviceHelper = new SearchDeviceHelper(((Activity) mUniSDKInstance.getContext()));
+                    searchDeviceHelper.reuestBlePermission(((Activity) mUniSDKInstance.getContext()));
+                    searchDeviceHelper.searchDevice(searchDevice);
 
 
-                helper = new YueWifiHelper((Activity) mUniSDKInstance.getContext(), this);
-                helper.startScan();
+                    helper = new YueWifiHelper((Activity) mUniSDKInstance.getContext(), this);
+                    helper.startScan();
+                } catch (Exception e) {
+                    JSONObject data = new JSONObject();
+                    data.put("code", "success");
+                    data.put("messageForBle", "发生异常" + e.getCause());
+                    callbackBleInfo.invoke(data);
+                }
             }
         }
+
+
     }
 
     //run JS thread
