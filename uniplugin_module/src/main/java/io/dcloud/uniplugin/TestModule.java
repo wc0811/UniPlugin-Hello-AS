@@ -79,6 +79,17 @@ public class TestModule extends UniModule implements IDeviceHelper, ScanResultLi
         }
     }
 
+    @UniJSMethod(uiThread = true)
+    public void testBack(UniJSCallback callback) {
+        if (callback != null) {
+            JSONObject data = new JSONObject();
+            data.put("code", "success");
+            data.put("message", "message");
+            callback.invokeAndKeepAlive(data);
+            //callback.invokeAndKeepAlive(data);
+        }
+    }
+
     //run ui thread
     @UniJSMethod(uiThread = true)
     public void testAsyncFunc1(JSONObject options, UniJSCallback callback) {
@@ -113,6 +124,30 @@ public class TestModule extends UniModule implements IDeviceHelper, ScanResultLi
                     searchDeviceHelper.reuestBlePermission(((Activity) mUniSDKInstance.getContext()));
                     searchDeviceHelper.searchDevice(searchDevice);
 
+
+                    helper = new YueWifiHelper((Activity) mUniSDKInstance.getContext(), this);
+                    helper.startScan();
+                } catch (Throwable e) {
+                    JSONObject data = new JSONObject();
+                    data.put("code", "success");
+                    data.put("messageForBle", "发生异常" + e.getCause());
+                    callbackBleInfo.invokeAndKeepAlive(data);
+                }
+            }
+        }
+    }
+
+    @UniJSMethod(uiThread = true)
+    public void getAsyncWifi(UniJSCallback callback) {
+        if (callback != null) {
+            callbackWifiInfo = callback;
+            //callback.invokeAndKeepAlive(data);
+            if (mUniSDKInstance != null && mUniSDKInstance.getContext() instanceof Activity) {
+                try {
+
+                    searchDeviceHelper = new SearchDeviceHelper(((Activity) mUniSDKInstance.getContext()));
+                    searchDeviceHelper.reuestBlePermission(((Activity) mUniSDKInstance.getContext()));
+                    searchDeviceHelper.searchDevice(searchDevice);
 
                     helper = new YueWifiHelper((Activity) mUniSDKInstance.getContext(), this);
                     helper.startScan();
