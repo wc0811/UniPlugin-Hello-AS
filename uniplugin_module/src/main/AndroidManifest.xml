@@ -24,29 +24,6 @@
         <activity
             android:name="io.dcloud.uniplugin.NativePageActivity"
             android:theme="@android:style/Theme.DeviceDefault.Light.NoActionBar" />
-        <activity
-            android:name="io.dcloud.uniplugin.SearchWiFiActivity"
-            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.DeviceDefault.Light.NoActionBar"
-            tools:ignore="LockedOrientationActivity" />
-        <activity
-            android:name="io.dcloud.uniplugin.SearchBleActivity"
-            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.DeviceDefault.Light.NoActionBar"
-            tools:ignore="LockedOrientationActivity" />
-        <activity
-            android:name="io.dcloud.uniplugin.BleAndWifiActivity"
-            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
-            android:exported="true"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.DeviceDefault.Light.NoActionBar"
-            android:windowSoftInputMode="stateAlwaysHidden"
-            tools:ignore="LockedOrientationActivity" />
-        <activity
-            android:name="io.dcloud.uniplugin.TestActivity"
-            android:theme="@android:style/Theme.DeviceDefault.Light.NoActionBar" />
 
         <service android:name="io.dcloud.uniplugin.lib.service.ConfigService" />
     </application>

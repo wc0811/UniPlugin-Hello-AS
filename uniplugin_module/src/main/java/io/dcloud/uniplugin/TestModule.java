@@ -68,6 +68,17 @@ public class TestModule extends UniModule implements IDeviceHelper, ScanResultLi
         }
     }
 
+    @UniJSMethod(uiThread = true)
+    public void testAsyncFuncCallBack(JSONObject options, UniJSCallback callback) {
+        if (callback != null) {
+            JSONObject data = new JSONObject();
+            data.put("code", "success");
+            data.put("message", "message");
+            callback.invokeAndKeepAlive(data);
+            //callback.invokeAndKeepAlive(data);
+        }
+    }
+
     //run ui thread
     @UniJSMethod(uiThread = true)
     public void testAsyncFunc1(JSONObject options, UniJSCallback callback) {
@@ -340,7 +351,7 @@ public class TestModule extends UniModule implements IDeviceHelper, ScanResultLi
     @UniJSMethod(uiThread = true)
     public void gotoNativePage() {
         if (mUniSDKInstance != null && mUniSDKInstance.getContext() instanceof Activity) {
-            Intent intent = new Intent(mUniSDKInstance.getContext(), TestActivity.class);
+            Intent intent = new Intent(mUniSDKInstance.getContext(), NativePageActivity.class);
             ((Activity) mUniSDKInstance.getContext()).startActivityForResult(intent, REQUEST_CODE);
         }
     }
