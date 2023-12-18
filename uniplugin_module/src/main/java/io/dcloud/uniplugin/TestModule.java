@@ -63,7 +63,7 @@ public class TestModule extends UniModule implements IDeviceHelper, ScanResultLi
         if (callback != null) {
             JSONObject data = new JSONObject();
             data.put("code", "success");
-            callback.invoke(data);
+            callback.invokeAndKeepAlive(data);
             //callback.invokeAndKeepAlive(data);
         }
     }
@@ -80,11 +80,11 @@ public class TestModule extends UniModule implements IDeviceHelper, ScanResultLi
                     searchDeviceHelper.reuestBlePermission(((Activity) mUniSDKInstance.getContext()));
                     searchDeviceHelper.searchDevice(searchDevice);
 
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     JSONObject data = new JSONObject();
                     data.put("code", "success");
                     data.put("messageForBle", "发生异常" + e.getCause());
-                    callbackBleInfo.invoke(data);
+                    callbackBleInfo.invokeAndKeepAlive(data);
                 }
             }
         }
@@ -105,11 +105,11 @@ public class TestModule extends UniModule implements IDeviceHelper, ScanResultLi
 
                     helper = new YueWifiHelper((Activity) mUniSDKInstance.getContext(), this);
                     helper.startScan();
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     JSONObject data = new JSONObject();
                     data.put("code", "success");
                     data.put("messageForBle", "发生异常" + e.getCause());
-                    callbackBleInfo.invoke(data);
+                    callbackBleInfo.invokeAndKeepAlive(data);
                 }
             }
         }
@@ -158,7 +158,7 @@ public class TestModule extends UniModule implements IDeviceHelper, ScanResultLi
 
                     }
                 }
-            } catch (Exception exception) {
+            } catch (Throwable exception) {
                 JSONObject data = new JSONObject();
                 data.put("code", "success");
                 data.put("message", "异常" + exception.getCause());
@@ -181,11 +181,11 @@ public class TestModule extends UniModule implements IDeviceHelper, ScanResultLi
                     searchDeviceHelper.reuestBlePermission(((Activity) mUniSDKInstance.getContext()));
                     searchDeviceHelper.searchDevice(searchDevice);
 
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     JSONObject data = new JSONObject();
                     data.put("code", "success");
                     data.put("messageForBle", "发生异常" + e.getCause());
-                    callbackBleInfo.invoke(data);
+                    callbackBleInfo.invokeAndKeepAlive(data);
                 }
             }
         }
@@ -204,11 +204,11 @@ public class TestModule extends UniModule implements IDeviceHelper, ScanResultLi
                     searchDeviceHelper.reuestBlePermission(((Activity) mUniSDKInstance.getContext()));
                     searchDeviceHelper.searchDevice(searchDevice);
 
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     JSONObject data = new JSONObject();
                     data.put("code", "success");
                     data.put("messageForBle", "发生异常" + e.getCause());
-                    callbackBleInfo.invoke(data);
+                    callbackBleInfo.invokeAndKeepAlive(data);
                 }
             }
         }
@@ -258,7 +258,7 @@ public class TestModule extends UniModule implements IDeviceHelper, ScanResultLi
 
                     }
                 }
-            } catch (Exception exception) {
+            } catch (Throwable exception) {
                 JSONObject data = new JSONObject();
                 data.put("code", "success");
                 data.put("message", "异常" + exception.getCause());
@@ -283,11 +283,11 @@ public class TestModule extends UniModule implements IDeviceHelper, ScanResultLi
                     searchDeviceHelper.reuestBlePermission(((Activity) mUniSDKInstance.getContext()));
                     searchDeviceHelper.searchDevice(searchDevice);
 
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     JSONObject data = new JSONObject();
                     data.put("code", "success");
                     data.put("messageForBle", "发生异常" + e.getCause());
-                    callbackBleInfo.invoke(data);
+                    callbackBleInfo.invokeAndKeepAlive(data);
                 }
             }
         }
@@ -308,11 +308,11 @@ public class TestModule extends UniModule implements IDeviceHelper, ScanResultLi
 
                     helper = new YueWifiHelper((Activity) mUniSDKInstance.getContext(), this);
                     helper.startScan();
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     JSONObject data = new JSONObject();
                     data.put("code", "success");
                     data.put("messageForBle", "发生异常" + e.getCause());
-                    callbackBleInfo.invoke(data);
+                    callbackBleInfo.invokeAndKeepAlive(data);
                 }
             }
         }
@@ -413,7 +413,7 @@ public class TestModule extends UniModule implements IDeviceHelper, ScanResultLi
             JSONObject data = new JSONObject();
             data.put("code", "success");
             data.put("bleName", bleName);
-            callbackBleInfo.invoke(data);
+            callbackBleInfo.invokeAndKeepAlive(data);
         }
     }
 
@@ -434,7 +434,7 @@ public class TestModule extends UniModule implements IDeviceHelper, ScanResultLi
                                     JSONObject data = new JSONObject();
                                     data.put("code", "success");
                                     data.put("wifi", scanResult.SSID);
-                                    callbackWifiInfo.invoke(data);
+                                    callbackWifiInfo.invokeAndKeepAlive(data);
                                 }
                                 nlist.add(scanResult.SSID);
                             }
@@ -460,13 +460,13 @@ public class TestModule extends UniModule implements IDeviceHelper, ScanResultLi
 
         @Override
         public void onSuccess() {
-            callbackResult.invoke("");
+            callbackResult.invokeAndKeepAlive("");
 
             if (callbackResult != null) {
                 JSONObject data = new JSONObject();
                 data.put("code", "success");
                 data.put("message", "配网成功");
-                callbackResult.invoke(data);
+                callbackResult.invokeAndKeepAlive(data);
             }
         }
 
@@ -476,7 +476,7 @@ public class TestModule extends UniModule implements IDeviceHelper, ScanResultLi
                 JSONObject data = new JSONObject();
                 data.put("code", "success");
                 data.put("message", "配网失败,原因:" + errCode.toString());
-                callbackResult.invoke(data);
+                callbackResult.invokeAndKeepAlive(data);
             }
         }
     };
