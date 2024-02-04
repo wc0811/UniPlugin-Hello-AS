@@ -1,7 +1,3 @@
 <resources>
     <string name="app_name">uniplugin_richAlert</string>
-    <string name="permission_request">Permission Request</string>
-    <string name="Wifi_permission">Please  wifi permission manually</string>
-    <string name="wifi_allow">allow</string>
-    <string name="wifi_denial"> Denial</string>
 </resources>

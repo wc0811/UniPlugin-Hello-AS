@@ -1,30 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="uni.dcloud.io.uniplugin_module">
+    package="uni.dcloud.io.uniplugin_module" >
+<application>
+<activity android:name="io.dcloud.uniplugin.NativePageActivity"
+    android:theme="@android:style/Theme.DeviceDefault.Light.NoActionBar"></activity>
 
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.READ_OWNER_DATA" />
-    <uses-permission android:name="android.permission.WRITE_OWNER_DATA" />
-    <uses-permission android:name="aandroid.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-
-    <uses-feature
-        android:name="android.hardware.bluetooth_le"
-        android:required="true" />
-
-    <application>
-        <activity
-            android:name="io.dcloud.uniplugin.NativePageActivity"
-            android:theme="@android:style/Theme.DeviceDefault.Light.NoActionBar" />
-
-        <service android:name="io.dcloud.uniplugin.lib.service.ConfigService" />
-    </application>
+    <service android:name="io.dcloud.service.ConfigService" />
+</application>
 </manifest>

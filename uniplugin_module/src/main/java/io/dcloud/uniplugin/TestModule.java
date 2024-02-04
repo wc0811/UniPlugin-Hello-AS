@@ -4,371 +4,119 @@ import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiInfo;
-import android.os.Build;
+import android.net.wifi.WifiManager;
+import android.os.Handler;
+import android.os.Message;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.RequiresApi;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.alibaba.fastjson.JSONObject;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
+import io.dcloud.ConfigHelper;
+import io.dcloud.erro.ErrCode;
+import io.dcloud.feature.uniapp.UniSDKInstance;
 import io.dcloud.feature.uniapp.annotation.UniJSMethod;
 import io.dcloud.feature.uniapp.bridge.UniJSCallback;
 import io.dcloud.feature.uniapp.common.UniModule;
-import io.dcloud.uniplugin.Utils.YueWifiHelper;
-import io.dcloud.uniplugin.lib.ConfigHelper;
-import io.dcloud.uniplugin.lib.SearchDeviceHelper;
-import io.dcloud.uniplugin.lib.error.ErrCode;
-import io.dcloud.uniplugin.lib.listener.ConfigListener;
-import io.dcloud.uniplugin.lib.listener.SearchDeviceListener;
-import io.dcloud.uniplugin.lib.service.ConfigService;
-import io.dcloud.uniplugin.listener.ScanResultListener;
+import io.dcloud.lib.SearchDeviceHelper;
+import io.dcloud.listener.ConfigListener;
+import io.dcloud.listener.LogListener;
+import io.dcloud.listener.ScanResultListener;
+import io.dcloud.listener.SearchDeviceListener;
+import io.dcloud.service.ConfigService;
+import io.dcloud.util.DateUtil;
+import io.dcloud.util.YueWifiHelper;
 
 
-public class TestModule extends UniModule implements IDeviceHelper, ScanResultListener {
+public class TestModule extends UniModule {
 
     String TAG = "TestModule";
     public static int REQUEST_CODE = 1000;
 
+    UniJSCallback cb;
 
     SearchDeviceHelper searchDeviceHelper;
 
-    private String strBleName = "Radar_BLE";
+    JSONObject jsonObject;
 
-    private List<BluetoothDevice> mLeDevices = new ArrayList<>();
-    private List<BluetoothDevice> mAllDevices = new ArrayList<>();
-    private UniJSCallback callbackBleInfo = null;
-    private UniJSCallback callbackWifiInfo = null;
-    private UniJSCallback callbackResult = null;
-
-
-    private YueWifiHelper helper;
-    private List<ScanResult> mWifiList = new ArrayList<>();
-
-    private ConfigHelper configHelper;
-
-    //run ui thread
+    //蓝牙查找
     @UniJSMethod(uiThread = true)
-    public void testAsyncFunc(JSONObject options, UniJSCallback callback) {
-        Log.e(TAG, "testAsyncFunc--" + options);
-        if (callback != null) {
-            JSONObject data = new JSONObject();
-            data.put("code", "success");
-            callback.invokeAndKeepAlive(data);
-            //callback.invokeAndKeepAlive(data);
+    public void searchLanya(JSONObject options, UniJSCallback callback) {
+        Log.e(TAG, "testAsyncFunc--"+options);
+        if(callback != null) {
+            cb = callback;
+                        //callback.invokeAndKeepAlive(data);
         }
+        if (options != null){
+            jsonObject = options;
+            Log.e(TAG, "蓝牙名称: "+jsonObject.getString("lanyaName") );
+        }
+        searchDeviceHelper = new SearchDeviceHelper((Activity)mUniSDKInstance.getContext() );
+        searchDeviceHelper.reuestBlePermission((Activity)mUniSDKInstance.getContext());
+        searchDeviceHelper.searchDevice(searchDevice);
     }
 
+    //WIFI查找
     @UniJSMethod(uiThread = true)
-    public void testAsyncFuncCallBack(JSONObject options, UniJSCallback callback) {
-        if (callback != null) {
-            JSONObject data = new JSONObject();
-            data.put("code", "success");
-            data.put("message", "message");
-            callback.invokeAndKeepAlive(data);
-            //callback.invokeAndKeepAlive(data);
+    public void searchWifi(JSONObject options, UniJSCallback callback) {
+        Log.e(TAG, "searchWifi--"+options);
+        if(callback != null) {
+            cb = callback;
+                        //callback.invokeAndKeepAlive(data);
         }
+        if (options != null){
+            jsonObject = options;
+        }
+        wifiGet();
     }
 
+    //连接
     @UniJSMethod(uiThread = true)
-    public void testBack(UniJSCallback callback) {
-        if (callback != null) {
-            JSONObject data = new JSONObject();
-            data.put("code", "success");
-            data.put("message", "message");
-            callback.invokeAndKeepAlive(data);
+    public void lianjie(JSONObject options, UniJSCallback callback) {
+        Log.e(TAG, "lianjie--"+options);
+        if(callback != null) {
+            cb = callback;
             //callback.invokeAndKeepAlive(data);
         }
-    }
-
-    //run ui thread
-    @UniJSMethod(uiThread = true)
-    public void testAsyncFunc1(JSONObject options, UniJSCallback callback) {
-        if (callback != null) {
-            callbackBleInfo = callback;
-            //callback.invokeAndKeepAlive(data);
-            if (mUniSDKInstance != null && mUniSDKInstance.getContext() instanceof Activity) {
-                try {
-                    searchDeviceHelper = new SearchDeviceHelper(((Activity) mUniSDKInstance.getContext()));
-                    searchDeviceHelper.reuestBlePermission(((Activity) mUniSDKInstance.getContext()));
-                    searchDeviceHelper.searchDevice(searchDevice);
-
-                } catch (Throwable e) {
-                    JSONObject data = new JSONObject();
-                    data.put("code", "success");
-                    data.put("messageForBle", "发生异常" + e.getCause());
-                    callbackBleInfo.invokeAndKeepAlive(data);
-                }
-            }
+        if (options != null){
+            jsonObject = options;
         }
-    }
+//        wifiGet();
 
-    @UniJSMethod(uiThread = true)
-    public void testAsyncFunc2(JSONObject options, UniJSCallback callback) {
-        if (callback != null) {
-            callbackWifiInfo = callback;
-            //callback.invokeAndKeepAlive(data);
-            if (mUniSDKInstance != null && mUniSDKInstance.getContext() instanceof Activity) {
-                try {
-
-                    searchDeviceHelper = new SearchDeviceHelper(((Activity) mUniSDKInstance.getContext()));
-                    searchDeviceHelper.reuestBlePermission(((Activity) mUniSDKInstance.getContext()));
-                    searchDeviceHelper.searchDevice(searchDevice);
-
-
-                    helper = new YueWifiHelper((Activity) mUniSDKInstance.getContext(), this);
-                    helper.startScan();
-                } catch (Throwable e) {
-                    JSONObject data = new JSONObject();
-                    data.put("code", "success");
-                    data.put("messageForBle", "发生异常" + e.getCause());
-                    callbackBleInfo.invokeAndKeepAlive(data);
-                }
-            }
-        }
-    }
-
-    @UniJSMethod(uiThread = true)
-    public void getAsyncWifi(UniJSCallback callback) {
-        if (callback != null) {
-            callbackWifiInfo = callback;
-            //callback.invokeAndKeepAlive(data);
-            if (mUniSDKInstance != null && mUniSDKInstance.getContext() instanceof Activity) {
-                try {
-
-                    searchDeviceHelper = new SearchDeviceHelper(((Activity) mUniSDKInstance.getContext()));
-                    searchDeviceHelper.reuestBlePermission(((Activity) mUniSDKInstance.getContext()));
-                    searchDeviceHelper.searchDevice(searchDevice);
-
-                    helper = new YueWifiHelper((Activity) mUniSDKInstance.getContext(), this);
-                    helper.startScan();
-                } catch (Throwable e) {
-                    JSONObject data = new JSONObject();
-                    data.put("code", "success");
-                    data.put("messageForBle", "发生异常" + e.getCause());
-                    callbackBleInfo.invokeAndKeepAlive(data);
-                }
-            }
-        }
-    }
-
-    @UniJSMethod(uiThread = true)
-    public void testAsyncFunc3(JSONObject options, UniJSCallback callback) {
-
-        if (callback != null) {
-            callbackResult = callback;
-            String bleName = "";
-            String wifiSSID = "";
-            String wifiPassword = "";
-            try {
-                bleName = options.getString("bleName");
-                wifiSSID = options.getString("wifiName");
-                wifiPassword = options.getString("wifiPassword");
-
-
-                configHelper = new ConfigHelper();
-
-                if (mUniSDKInstance != null && mUniSDKInstance.getContext() instanceof Activity) {
-                    searchDeviceHelper = new SearchDeviceHelper(((Activity) mUniSDKInstance.getContext()));
-                    searchDeviceHelper.reuestBlePermission(((Activity) mUniSDKInstance.getContext()));
-                    searchDeviceHelper.searchDevice(searchDevice);
-
-                    configHelper.registerConfigListener(((Activity) mUniSDKInstance.getContext()), configListener);
-                    String bleMac = "";
-                    for (BluetoothDevice item : mLeDevices) {
-                        if (bleName != null && bleName == item.getName()) {
-                            bleMac = item.getAddress();
-                            break;
-                        }
-                    }
-
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-                        byte[] wifiSSIDBytes = null;
-                        for (ScanResult wifiItem : mWifiList) {
-                            if (wifiSSID != null && wifiSSID == wifiItem.SSID) {
-                                wifiSSIDBytes = getSSIDRawData(wifiItem);
-                                break;
-                            }
-                        }
-                        configHelper.setPassword(wifiPassword).setSsid(wifiSSIDBytes).setDeviceAddress(bleMac).setTimeoutMilliscond(40 * 1000)//40s
-                                .startConfig(((Activity) mUniSDKInstance.getContext()), ConfigService.class);
-
-                    }
-                }
-            } catch (Throwable exception) {
-                JSONObject data = new JSONObject();
-                data.put("code", "success");
-                data.put("message", "异常" + exception.getCause());
-                callback.invoke(data);
-            }
-
-            //callback.invokeAndKeepAlive(data);
-        }
-    }
-
-    @UniJSMethod(uiThread = true)
-    public void testAsyncFunc4(JSONObject options, UniJSCallback callback) {
-        if (callback != null) {
-            callbackBleInfo = callback;
-            //callback.invokeAndKeepAlive(data);
-            if (mUniSDKInstance != null && mUniSDKInstance.getContext() instanceof Activity) {
-                try {
-                    strBleName = options.getString("bleName");
-                    searchDeviceHelper = new SearchDeviceHelper(((Activity) mUniSDKInstance.getContext()));
-                    searchDeviceHelper.reuestBlePermission(((Activity) mUniSDKInstance.getContext()));
-                    searchDeviceHelper.searchDevice(searchDevice);
-
-                } catch (Throwable e) {
-                    JSONObject data = new JSONObject();
-                    data.put("code", "success");
-                    data.put("messageForBle", "发生异常" + e.getCause());
-                    callbackBleInfo.invokeAndKeepAlive(data);
-                }
-            }
-        }
-
-    }
-
-    @UniJSMethod(uiThread = true)
-    public void getBleInfoByBleName(JSONObject options, UniJSCallback callback) {
-        if (callback != null) {
-            callbackBleInfo = callback;
-            //callback.invokeAndKeepAlive(data);
-            if (mUniSDKInstance != null && mUniSDKInstance.getContext() instanceof Activity) {
-                try {
-                    strBleName = options.getString("bleName");
-                    searchDeviceHelper = new SearchDeviceHelper(((Activity) mUniSDKInstance.getContext()));
-                    searchDeviceHelper.reuestBlePermission(((Activity) mUniSDKInstance.getContext()));
-                    searchDeviceHelper.searchDevice(searchDevice);
-
-                } catch (Throwable e) {
-                    JSONObject data = new JSONObject();
-                    data.put("code", "success");
-                    data.put("messageForBle", "发生异常" + e.getCause());
-                    callbackBleInfo.invokeAndKeepAlive(data);
-                }
-            }
-        }
-
-    }
-
-    //run ui thread
-    @UniJSMethod(uiThread = true)
-    public void setBleAndeNet(JSONObject options, UniJSCallback callback) {
-        if (callback != null) {
-            callbackResult = callback;
-            String bleName = "";
-            String wifiSSID = "";
-            String wifiPassword = "";
-            try {
-                bleName = options.getString("bleName");
-                wifiSSID = options.getString("wifiName");
-                wifiPassword = options.getString("wifiPassword");
-
-
-                configHelper = new ConfigHelper();
-
-                if (mUniSDKInstance != null && mUniSDKInstance.getContext() instanceof Activity) {
-                    searchDeviceHelper = new SearchDeviceHelper(((Activity) mUniSDKInstance.getContext()));
-                    searchDeviceHelper.reuestBlePermission(((Activity) mUniSDKInstance.getContext()));
-                    searchDeviceHelper.searchDevice(searchDevice);
-
-                    configHelper.registerConfigListener(((Activity) mUniSDKInstance.getContext()), configListener);
-                    String bleMac = "";
-                    for (BluetoothDevice item : mLeDevices) {
-                        if (bleName != null && bleName == item.getName()) {
-                            bleMac = item.getAddress();
-                            break;
-                        }
-                    }
-
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-                        byte[] wifiSSIDBytes = null;
-                        for (ScanResult wifiItem : mWifiList) {
-                            if (wifiSSID != null && wifiSSID == wifiItem.SSID) {
-                                wifiSSIDBytes = getSSIDRawData(wifiItem);
-                                break;
-                            }
-                        }
-                        configHelper.setPassword(wifiPassword).setSsid(wifiSSIDBytes).setDeviceAddress(bleMac).setTimeoutMilliscond(40 * 1000)//40s
-                                .startConfig(((Activity) mUniSDKInstance.getContext()), ConfigService.class);
-
-                    }
-                }
-            } catch (Throwable exception) {
-                JSONObject data = new JSONObject();
-                data.put("code", "success");
-                data.put("message", "异常" + exception.getCause());
-                callback.invoke(data);
-            }
-
-            //callback.invokeAndKeepAlive(data);
-        }
-    }
-
-    //run ui thread
-    @UniJSMethod(uiThread = true)
-    public void getBleInfo(JSONObject options, UniJSCallback callback) {
-        Log.e(TAG, "testAsyncFunc--" + options);
-
-        if (callback != null) {
-            callbackBleInfo = callback;
-            //callback.invokeAndKeepAlive(data);
-            if (mUniSDKInstance != null && mUniSDKInstance.getContext() instanceof Activity) {
-                try {
-                    searchDeviceHelper = new SearchDeviceHelper(((Activity) mUniSDKInstance.getContext()));
-                    searchDeviceHelper.reuestBlePermission(((Activity) mUniSDKInstance.getContext()));
-                    searchDeviceHelper.searchDevice(searchDevice);
-
-                } catch (Throwable e) {
-                    JSONObject data = new JSONObject();
-                    data.put("code", "success");
-                    data.put("messageForBle", "发生异常" + e.getCause());
-                    callbackBleInfo.invokeAndKeepAlive(data);
-                }
-            }
-        }
-    }
-
-    @UniJSMethod(uiThread = true)
-    public void getWifiInfo(JSONObject options, UniJSCallback callback) {
-        if (callback != null) {
-            callbackWifiInfo = callback;
-            //callback.invokeAndKeepAlive(data);
-            if (mUniSDKInstance != null && mUniSDKInstance.getContext() instanceof Activity) {
-                try {
-
-                    searchDeviceHelper = new SearchDeviceHelper(((Activity) mUniSDKInstance.getContext()));
-                    searchDeviceHelper.reuestBlePermission(((Activity) mUniSDKInstance.getContext()));
-                    searchDeviceHelper.searchDevice(searchDevice);
-
-
-                    helper = new YueWifiHelper((Activity) mUniSDKInstance.getContext(), this);
-                    helper.startScan();
-                } catch (Throwable e) {
-                    JSONObject data = new JSONObject();
-                    data.put("code", "success");
-                    data.put("messageForBle", "发生异常" + e.getCause());
-                    callbackBleInfo.invokeAndKeepAlive(data);
-                }
-            }
-        }
-
-
+        configHelper = new ConfigHelper();
+        configHelper.registerLogListener(mUniSDKInstance.getContext(),logListener);
+        configHelper.registerConfigListener(mUniSDKInstance.getContext(),configListener);
+//        configHelper.setPassword("pye971108.")
+//        .setSsid(("104").getBytes(StandardCharsets.UTF_8))
+//                .setDeviceAddress("70:1D:08:08:CF:C9")
+        configHelper.setPassword(jsonObject.getString("wifiPassword"))
+                .setSsid(jsonObject.getString("SSID").getBytes(StandardCharsets.UTF_8))
+                .setDeviceAddress(jsonObject.getString("Mac"))
+                .setTimeoutMilliscond(40*1000)//40s
+                .startConfig((Activity)mUniSDKInstance.getContext(), ConfigService.class);
     }
 
     //run JS thread
-    @UniJSMethod(uiThread = false)
-    public JSONObject testSyncFunc() {
+    @UniJSMethod (uiThread = false)
+    public JSONObject testSyncFunc(){
         JSONObject data = new JSONObject();
         data.put("code", "success");
         return data;
@@ -376,53 +124,55 @@ public class TestModule extends UniModule implements IDeviceHelper, ScanResultLi
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_CODE && data.hasExtra("respond")) {
-            Log.e("TestModule", "原生页面返回----" + data.getStringExtra("respond"));
+        if(requestCode == REQUEST_CODE && data.hasExtra("respond")) {
+            Log.e("TestModule", "原生页面返回----"+data.getStringExtra("respond"));
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
-    @UniJSMethod(uiThread = true)
-    public void gotoNativePage() {
-        if (mUniSDKInstance != null && mUniSDKInstance.getContext() instanceof Activity) {
+
+
+    @UniJSMethod (uiThread = true)
+    public void gotoNativePage(){
+        if(mUniSDKInstance != null && mUniSDKInstance.getContext() instanceof Activity) {
             Intent intent = new Intent(mUniSDKInstance.getContext(), NativePageActivity.class);
-            ((Activity) mUniSDKInstance.getContext()).startActivityForResult(intent, REQUEST_CODE);
+            ((Activity)mUniSDKInstance.getContext()).startActivityForResult(intent, REQUEST_CODE);
         }
     }
 
-    @Override
-    public void getWifi() {
-
-    }
-
-    @Override
-    public void searchBle() {
-
-    }
-
-    @Override
-    public void connectBleAndWifi() {
-        if (mUniSDKInstance != null && mUniSDKInstance.getContext() instanceof Activity) {
-            searchDeviceHelper = new SearchDeviceHelper(((Activity) mUniSDKInstance.getContext()));
-            searchDeviceHelper.reuestBlePermission(((Activity) mUniSDKInstance.getContext()));
-            searchDeviceHelper.searchDevice(searchDevice);
-        }
-    }
-
-    private void filterDevice() {
-        mLeDevices.clear();
-        mLeDevices.addAll(mAllDevices);
-        filterDeviceName();
-    }
-
-
+    /*-----------蓝牙查找------------*/
+    private List<BluetoothDevice> mLeDevices = new ArrayList<>();
+    private List<BluetoothDevice> mAllDevices = new ArrayList<>();
+    int a = 0;
     SearchDeviceListener searchDevice = new SearchDeviceListener() {
         @Override
         public void onDiscoverDevice(BluetoothDevice device) {
-            if (device.getName() != null) {
-                if (addDevice(device)) {
-                    filterDevice();
+            a = 0;
+            //if(device.getName() != null){
+            if(addDevice(device)){
+                mLeDevices.clear();
+                mLeDevices.addAll(mAllDevices);
+                for (BluetoothDevice check:
+                        mLeDevices) {
+                    a += 1;
+                    Log.e(TAG, "扫描到的蓝牙名称: "+check.getName());
+                    if(Objects.nonNull(check.getName()) && a < 100){
+                        if (check.getName().equals(jsonObject.getString("lanyaName"))){
+                            Log.e(TAG, "Mac地址: "+check.getAddress());
+                            JSONObject data = new JSONObject();
+                            data.put("Mac", check.getAddress());
+                            cb.invoke(data);
+                            searchDeviceHelper.cancel();
+                        }
+                    }else if (a >= 100){
+                        JSONObject data = new JSONObject();
+                        data.put("Mac", "");
+                        cb.invoke(data);
+                        searchDeviceHelper.cancel();
+                        return;
+                    }
+                    Log.e(TAG, "次数: "+a);
                 }
             }
         }
@@ -432,10 +182,9 @@ public class TestModule extends UniModule implements IDeviceHelper, ScanResultLi
         }
     };
 
-
     public boolean addDevice(BluetoothDevice device) {
-        for (BluetoothDevice dev : mAllDevices) {
-            if (dev.getAddress().equals(device.getAddress())) {
+        for (BluetoothDevice dev:mAllDevices){
+            if(dev.getAddress().equals(device.getAddress())){
                 return false;
             }
         }
@@ -443,107 +192,119 @@ public class TestModule extends UniModule implements IDeviceHelper, ScanResultLi
         // mLeDevices.add(device);
         return true;
     }
+    /*-----------------------*/
 
-    private void filterDeviceName() {
-        Iterator<BluetoothDevice> iterator = mLeDevices.iterator();
-        while (iterator.hasNext()) {
-            BluetoothDevice device = iterator.next();
-            if (device.getName() != null && device.getName().startsWith(strBleName) == false) {
-                iterator.remove();
-            } else if (device.getName() == null) {
-                iterator.remove();
+    /**/
+    byte[] SSID;
+    private static final String SP_FILE = "SP_FILE";
+    private static final String SP_KEY_BLE_NAME = "SP_KEY_BLE_NAME";
+    private static final String SP_KEY_BLE_MAC = "SP_KEY_BLE_MAC";
+    private static final String SP_KEY_WIFI_SSID = "SP_KEY_WIFI_SSID";
+    private static final String SP_KEY_WIFI_PWD = "SP_KEY_WIFI_PWD";
+    private static final String SP_KEY_CHECKBOX_PWD= "SP_KEY_CHECKBOX_PWD";
+    public void wifiGet(){
+        WifiManager wifiManager = (WifiManager) mUniSDKInstance.getContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        if (!wifiManager.isWifiEnabled()){
+            wifiManager.setWifiEnabled(true);
+        }else{
+            Log.e(TAG, "创建成功" );
+        }
+        wifiManager.startScan();
+        List<ScanResult> scanResults = wifiManager.getScanResults();
+        List<String> SSID = new ArrayList<>();
+        for (ScanResult check:
+        scanResults) {
+            SSID.add(check.SSID);
+        }
+        JSONObject data = new JSONObject();
+        data.put("wifi", SSID);
+        cb.invoke(data);
+    }
+    /**/
+
+    /*--------连接使用---------------*/
+    private ConfigHelper configHelper;
+    private static final int MSG_LOG_UI = 99;
+    private static final int MSG_ERROR = 98;
+    EditText etBLEName,etSSID,etPwd,etLog;
+    String bleMac = "70:1D:08:08:CF:C9";
+    LogListener logListener = new LogListener() {
+        @Override
+        public void logInfo(String tag, String message) {
+            Log.e(TAG, "logInfo: "+tag );
+            Log.d(tag, message) ;
+            appendLog(message);
+        }
+
+        @Override
+        public void logError(String tag, Exception exception) {
+            exception.printStackTrace();
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            exception.printStackTrace(pw);
+            appendLog(sw.toString());
+        }
+    };
+
+    private void appendLog(String log){
+
+        Message message = mHandler.obtainMessage();
+        message.obj = log;
+        message.what = MSG_LOG_UI;
+        mHandler.sendMessage(message);
+    }
+
+    Handler mHandler = new Handler(){
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what){
+                case MSG_ERROR:
+                    String errrMsg = (String) msg.obj;
+                    Toast.makeText(mUniSDKInstance.getContext(), errrMsg, Toast.LENGTH_SHORT).show();
+                case MSG_LOG_UI:
+                    String log = (String) msg.obj;
+//                    if (log.equals("1")){
+//                        JSONObject data = new JSONObject();
+//                        data.put("log", "config");
+//                        cb.invoke(data);
+//                    }else if(log.equals("2")){
+//                        JSONObject data = new JSONObject();
+//                        data.put("log", "wifi");
+//                        cb.invoke(data);
+//                    }else if(log.equals("3")){
+//                        JSONObject data = new JSONObject();
+//                        data.put("log", "wifiPwd");
+//                        cb.invoke(data);
+//                    }
+                    break;
             }
         }
-        if (!mLeDevices.isEmpty() && callbackBleInfo != null) {
-            String bleName = mLeDevices.get(mLeDevices.size() - 1).getName();
-            JSONObject data = new JSONObject();
-            data.put("code", "success");
-            data.put("bleName", bleName);
-            callbackBleInfo.invokeAndKeepAlive(data);
-        }
-    }
-
-    @Override
-    public void resultSuc(final List<ScanResult> list, boolean isLastTime) {
-        if (list != null && list.size() > 0) {
-            if (mUniSDKInstance != null && mUniSDKInstance.getContext() instanceof Activity) {
-
-                ((Activity) mUniSDKInstance.getContext()).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mWifiList.clear();
-                        List<String> nlist = new ArrayList<>();
-                        for (ScanResult scanResult : list) {
-                            if (nlist.contains(scanResult.SSID) == false && scanResult.SSID.length() > 0) {
-                                mWifiList.add(scanResult);
-                                if (callbackWifiInfo != null) {
-                                    JSONObject data = new JSONObject();
-                                    data.put("code", "success");
-                                    data.put("wifi", scanResult.SSID);
-                                    callbackWifiInfo.invokeAndKeepAlive(data);
-                                }
-                                nlist.add(scanResult.SSID);
-                            }
-                        }
-                    }
-                });
-            }
-        }
-    }
-
-    @Override
-    public void filterFailure() {
-
-    }
-
-    @Override
-    public void connectedWifiCallback(WifiInfo info) {
-
-    }
-
+    };
 
     ConfigListener configListener = new ConfigListener() {
 
         @Override
         public void onSuccess() {
-            callbackResult.invokeAndKeepAlive("");
-
-            if (callbackResult != null) {
-                JSONObject data = new JSONObject();
-                data.put("code", "success");
-                data.put("message", "配网成功");
-                callbackResult.invokeAndKeepAlive(data);
-            }
+            JSONObject data = new JSONObject();
+            data.put("peizhi", true);
+            data.put("beizhu", "配网成功");
+            cb.invoke(data);
+            appendLog("配网成功");
+//            Toast.makeText(mUniSDKInstance.getContext(), "配网成功", Toast.LENGTH_SHORT).show();
+//            enableView(true);
         }
 
         @Override
         public void onFail(ErrCode errCode) {
-            if (callbackResult != null) {
-                JSONObject data = new JSONObject();
-                data.put("code", "success");
-                data.put("message", "配网失败,原因:" + errCode.toString());
-                callbackResult.invokeAndKeepAlive(data);
-            }
+            JSONObject data = new JSONObject();
+            data.put("peizhi", false);
+            data.put("beizhu", "配网失败,原因:"+errCode.toString());
+            cb.invoke(data);
+            appendLog("配网失败,原因:"+errCode.toString());
+//            enableView(true);
+//            Toast.makeText(mUniSDKInstance.getContext(), "配网失败,原因:"+errCode.toString(), Toast.LENGTH_SHORT).show();
         }
     };
-
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public static byte[] getSSIDRawData(ScanResult scanResult) {
-        try {
-            Field field = scanResult.getClass().getField("wifiSsid");
-            field.setAccessible(true);
-            Object wifiSsid = field.get(scanResult);
-            if (wifiSsid == null) {
-                return null;
-            }
-            Method method = wifiSsid.getClass().getMethod("getOctets");
-            method.setAccessible(true);
-            return (byte[]) method.invoke(wifiSsid);
-        } catch (NoSuchFieldException | IllegalAccessException | NoSuchMethodException |
-                 InvocationTargetException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
+    /*-----------------------*/
 }
