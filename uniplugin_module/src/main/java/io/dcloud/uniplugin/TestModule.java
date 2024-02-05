@@ -56,33 +56,35 @@ public class TestModule extends UniModule {
     SearchDeviceHelper searchDeviceHelper;
 
     JSONObject jsonObject;
+    private int connectTime = 0;
+    public static final int RETRY_NUMBER = 2;
 
     //蓝牙查找
     @UniJSMethod(uiThread = true)
     public void searchLanya(JSONObject options, UniJSCallback callback) {
-        Log.e(TAG, "testAsyncFunc--"+options);
-        if(callback != null) {
+        Log.e(TAG, "testAsyncFunc--" + options);
+        if (callback != null) {
             cb = callback;
-                        //callback.invokeAndKeepAlive(data);
+            //callback.invokeAndKeepAlive(data);
         }
-        if (options != null){
+        if (options != null) {
             jsonObject = options;
-            Log.e(TAG, "蓝牙名称: "+jsonObject.getString("lanyaName") );
+            Log.e(TAG, "蓝牙名称: " + jsonObject.getString("lanyaName"));
         }
-        searchDeviceHelper = new SearchDeviceHelper((Activity)mUniSDKInstance.getContext() );
-        searchDeviceHelper.reuestBlePermission((Activity)mUniSDKInstance.getContext());
+        searchDeviceHelper = new SearchDeviceHelper((Activity) mUniSDKInstance.getContext());
+        searchDeviceHelper.reuestBlePermission((Activity) mUniSDKInstance.getContext());
         searchDeviceHelper.searchDevice(searchDevice);
     }
 
     //WIFI查找
     @UniJSMethod(uiThread = true)
     public void searchWifi(JSONObject options, UniJSCallback callback) {
-        Log.e(TAG, "searchWifi--"+options);
-        if(callback != null) {
+        Log.e(TAG, "searchWifi--" + options);
+        if (callback != null) {
             cb = callback;
-                        //callback.invokeAndKeepAlive(data);
+            //callback.invokeAndKeepAlive(data);
         }
-        if (options != null){
+        if (options != null) {
             jsonObject = options;
         }
         wifiGet();
@@ -91,32 +93,36 @@ public class TestModule extends UniModule {
     //连接
     @UniJSMethod(uiThread = true)
     public void lianjie(JSONObject options, UniJSCallback callback) {
-        Log.e(TAG, "lianjie--"+options);
-        if(callback != null) {
+        Log.e(TAG, "lianjie--" + options);
+        if (callback != null) {
             cb = callback;
             //callback.invokeAndKeepAlive(data);
         }
-        if (options != null){
+        if (options != null) {
             jsonObject = options;
         }
 //        wifiGet();
+        connectGatt();
+    }
 
+    private void connectGatt() {
+        connectTime += 1;
         configHelper = new ConfigHelper();
-        configHelper.registerLogListener(mUniSDKInstance.getContext(),logListener);
-        configHelper.registerConfigListener(mUniSDKInstance.getContext(),configListener);
+        configHelper.registerLogListener(mUniSDKInstance.getContext(), logListener);
+        configHelper.registerConfigListener(mUniSDKInstance.getContext(), configListener);
 //        configHelper.setPassword("pye971108.")
 //        .setSsid(("104").getBytes(StandardCharsets.UTF_8))
 //                .setDeviceAddress("70:1D:08:08:CF:C9")
         configHelper.setPassword(jsonObject.getString("wifiPassword"))
                 .setSsid(jsonObject.getString("SSID").getBytes(StandardCharsets.UTF_8))
                 .setDeviceAddress(jsonObject.getString("Mac"))
-                .setTimeoutMilliscond(40*1000)//40s
-                .startConfig((Activity)mUniSDKInstance.getContext(), ConfigService.class);
+                .setTimeoutMilliscond(40 * 1000)//40s
+                .startConfig((Activity) mUniSDKInstance.getContext(), ConfigService.class);
     }
 
     //run JS thread
-    @UniJSMethod (uiThread = false)
-    public JSONObject testSyncFunc(){
+    @UniJSMethod(uiThread = false)
+    public JSONObject testSyncFunc() {
         JSONObject data = new JSONObject();
         data.put("code", "success");
         return data;
@@ -124,20 +130,19 @@ public class TestModule extends UniModule {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == REQUEST_CODE && data.hasExtra("respond")) {
-            Log.e("TestModule", "原生页面返回----"+data.getStringExtra("respond"));
+        if (requestCode == REQUEST_CODE && data.hasExtra("respond")) {
+            Log.e("TestModule", "原生页面返回----" + data.getStringExtra("respond"));
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
 
-
-    @UniJSMethod (uiThread = true)
-    public void gotoNativePage(){
-        if(mUniSDKInstance != null && mUniSDKInstance.getContext() instanceof Activity) {
+    @UniJSMethod(uiThread = true)
+    public void gotoNativePage() {
+        if (mUniSDKInstance != null && mUniSDKInstance.getContext() instanceof Activity) {
             Intent intent = new Intent(mUniSDKInstance.getContext(), NativePageActivity.class);
-            ((Activity)mUniSDKInstance.getContext()).startActivityForResult(intent, REQUEST_CODE);
+            ((Activity) mUniSDKInstance.getContext()).startActivityForResult(intent, REQUEST_CODE);
         }
     }
 
@@ -150,29 +155,29 @@ public class TestModule extends UniModule {
         public void onDiscoverDevice(BluetoothDevice device) {
             a = 0;
             //if(device.getName() != null){
-            if(addDevice(device)){
+            if (addDevice(device)) {
                 mLeDevices.clear();
                 mLeDevices.addAll(mAllDevices);
-                for (BluetoothDevice check:
+                for (BluetoothDevice check :
                         mLeDevices) {
                     a += 1;
-                    Log.e(TAG, "扫描到的蓝牙名称: "+check.getName());
-                    if(Objects.nonNull(check.getName()) && a < 100){
-                        if (check.getName().equals(jsonObject.getString("lanyaName"))){
-                            Log.e(TAG, "Mac地址: "+check.getAddress());
+                    Log.e(TAG, "扫描到的蓝牙名称: " + check.getName());
+                    if (Objects.nonNull(check.getName()) && a < 100) {
+                        if (check.getName().equals(jsonObject.getString("lanyaName"))) {
+                            Log.e(TAG, "Mac地址: " + check.getAddress());
                             JSONObject data = new JSONObject();
                             data.put("Mac", check.getAddress());
                             cb.invoke(data);
                             searchDeviceHelper.cancel();
                         }
-                    }else if (a >= 100){
+                    } else if (a >= 100) {
                         JSONObject data = new JSONObject();
                         data.put("Mac", "");
                         cb.invoke(data);
                         searchDeviceHelper.cancel();
                         return;
                     }
-                    Log.e(TAG, "次数: "+a);
+                    Log.e(TAG, "次数: " + a);
                 }
             }
         }
@@ -183,8 +188,8 @@ public class TestModule extends UniModule {
     };
 
     public boolean addDevice(BluetoothDevice device) {
-        for (BluetoothDevice dev:mAllDevices){
-            if(dev.getAddress().equals(device.getAddress())){
+        for (BluetoothDevice dev : mAllDevices) {
+            if (dev.getAddress().equals(device.getAddress())) {
                 return false;
             }
         }
@@ -201,19 +206,20 @@ public class TestModule extends UniModule {
     private static final String SP_KEY_BLE_MAC = "SP_KEY_BLE_MAC";
     private static final String SP_KEY_WIFI_SSID = "SP_KEY_WIFI_SSID";
     private static final String SP_KEY_WIFI_PWD = "SP_KEY_WIFI_PWD";
-    private static final String SP_KEY_CHECKBOX_PWD= "SP_KEY_CHECKBOX_PWD";
-    public void wifiGet(){
+    private static final String SP_KEY_CHECKBOX_PWD = "SP_KEY_CHECKBOX_PWD";
+
+    public void wifiGet() {
         WifiManager wifiManager = (WifiManager) mUniSDKInstance.getContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        if (!wifiManager.isWifiEnabled()){
+        if (!wifiManager.isWifiEnabled()) {
             wifiManager.setWifiEnabled(true);
-        }else{
-            Log.e(TAG, "创建成功" );
+        } else {
+            Log.e(TAG, "创建成功");
         }
         wifiManager.startScan();
         List<ScanResult> scanResults = wifiManager.getScanResults();
         List<String> SSID = new ArrayList<>();
-        for (ScanResult check:
-        scanResults) {
+        for (ScanResult check :
+                scanResults) {
             SSID.add(check.SSID);
         }
         JSONObject data = new JSONObject();
@@ -226,13 +232,13 @@ public class TestModule extends UniModule {
     private ConfigHelper configHelper;
     private static final int MSG_LOG_UI = 99;
     private static final int MSG_ERROR = 98;
-    EditText etBLEName,etSSID,etPwd,etLog;
+    EditText etBLEName, etSSID, etPwd, etLog;
     String bleMac = "70:1D:08:08:CF:C9";
     LogListener logListener = new LogListener() {
         @Override
         public void logInfo(String tag, String message) {
-            Log.e(TAG, "logInfo: "+tag );
-            Log.d(tag, message) ;
+            Log.e(TAG, "logInfo: " + tag);
+            Log.d(tag, message);
             appendLog(message);
         }
 
@@ -246,7 +252,7 @@ public class TestModule extends UniModule {
         }
     };
 
-    private void appendLog(String log){
+    private void appendLog(String log) {
 
         Message message = mHandler.obtainMessage();
         message.obj = log;
@@ -254,11 +260,11 @@ public class TestModule extends UniModule {
         mHandler.sendMessage(message);
     }
 
-    Handler mHandler = new Handler(){
+    Handler mHandler = new Handler() {
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
-            switch (msg.what){
+            switch (msg.what) {
                 case MSG_ERROR:
                     String errrMsg = (String) msg.obj;
                     Toast.makeText(mUniSDKInstance.getContext(), errrMsg, Toast.LENGTH_SHORT).show();
@@ -286,6 +292,7 @@ public class TestModule extends UniModule {
 
         @Override
         public void onSuccess() {
+            connectTime = 0;
             JSONObject data = new JSONObject();
             data.put("peizhi", true);
             data.put("beizhu", "配网成功");
@@ -297,13 +304,18 @@ public class TestModule extends UniModule {
 
         @Override
         public void onFail(ErrCode errCode) {
-            JSONObject data = new JSONObject();
-            data.put("peizhi", false);
-            data.put("beizhu", "配网失败,原因:"+errCode.toString());
-            cb.invoke(data);
-            appendLog("配网失败,原因:"+errCode.toString());
+            appendLog("配网失败,原因:" + errCode.toString());
 //            enableView(true);
 //            Toast.makeText(mUniSDKInstance.getContext(), "配网失败,原因:"+errCode.toString(), Toast.LENGTH_SHORT).show();
+            if (connectTime <= RETRY_NUMBER) {
+                connectGatt();
+            } else {
+                connectTime = 0;
+                JSONObject data = new JSONObject();
+                data.put("peizhi", false);
+                data.put("beizhu", "配网失败,原因:" + errCode.toString());
+                cb.invoke(data);
+            }
         }
     };
     /*-----------------------*/
