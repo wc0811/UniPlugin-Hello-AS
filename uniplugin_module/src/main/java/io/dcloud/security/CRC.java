@@ -12,7 +12,7 @@ public class CRC {
         return pByte;
     }
 
-    public static boolean vertifyCRC(byte[] data){
+    public static boolean verifyCRC(byte[] data){
         int sum = 0;
         for (int i = 0;i< data.length - 1;i++){
             sum = sum + (0x000000ff&data[i]);

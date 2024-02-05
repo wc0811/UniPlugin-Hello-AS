@@ -268,7 +268,7 @@ public  class ConfigService extends IntentService {
         if(mReceivedData != null){
             if(mReceivedData[0] == RX_HEADER_0 && mReceivedData[1] == RX_HEADER_1){
 
-                if(CRC.vertifyCRC(mReceivedData) == false){
+                if(CRC.verifyCRC(mReceivedData) == false){
                     broadcastLog(LOG_LEVEL_DEBUG,"CRC failed to check the app！");
                     broadcastConfig(BROADCAST_CONFIG_ERR_APP_CRC);
                     return;
@@ -343,7 +343,7 @@ public  class ConfigService extends IntentService {
 
         if(mReceivedData[0] == RX_HEADER_0 && mReceivedData[1] == RX_HEADER_1){
 
-            if(CRC.vertifyCRC(mReceivedData) == false){
+            if(CRC.verifyCRC(mReceivedData) == false){
                 broadcastLog(LOG_LEVEL_DEBUG,"CRC failed to check the app！");
                 broadcastConfig(BROADCAST_CONFIG_ERR_APP_CRC);
                 return false;
@@ -406,7 +406,7 @@ public  class ConfigService extends IntentService {
 
         if(mReceivedData[0] == RX_HEADER_0 && mReceivedData[1] == RX_HEADER_1){
 
-            if(CRC.vertifyCRC(mReceivedData) == false){
+            if(CRC.verifyCRC(mReceivedData) == false){
                 broadcastLog(LOG_LEVEL_DEBUG,"CRC failed to check the app！");
                 broadcastConfig(BROADCAST_CONFIG_ERR_APP_CRC);
                 return false;
@@ -463,7 +463,7 @@ public  class ConfigService extends IntentService {
         }
 
         if(mReceivedData[0] == RX_HEADER_0 && mReceivedData[1] == RX_HEADER_1){
-            if(CRC.vertifyCRC(mReceivedData) == false){
+            if(CRC.verifyCRC(mReceivedData) == false){
                 broadcastLog(LOG_LEVEL_DEBUG,"CRC failed to check the app！");
                 broadcastConfig(BROADCAST_CONFIG_ERR_APP_CRC);
                 return false;
