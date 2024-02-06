@@ -71,6 +71,8 @@ public class TestModule extends UniModule {
             jsonObject = options;
             Log.e(TAG, "蓝牙名称: " + jsonObject.getString("lanyaName"));
         }
+        mLeDevices.clear();
+        mAllDevices.clear();
         searchDeviceHelper = new SearchDeviceHelper((Activity) mUniSDKInstance.getContext());
         searchDeviceHelper.reuestBlePermission((Activity) mUniSDKInstance.getContext());
         searchDeviceHelper.searchDevice(searchDevice);
@@ -232,8 +234,6 @@ public class TestModule extends UniModule {
     private ConfigHelper configHelper;
     private static final int MSG_LOG_UI = 99;
     private static final int MSG_ERROR = 98;
-    EditText etBLEName, etSSID, etPwd, etLog;
-    String bleMac = "70:1D:08:08:CF:C9";
     LogListener logListener = new LogListener() {
         @Override
         public void logInfo(String tag, String message) {
